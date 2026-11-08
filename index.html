@@ -3,92 +3,138 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b1020">
+  <meta name="theme-color" content="#ffffff">
   <title>QUICK BUZZER</title>
   <style>
-    :root { color-scheme: dark; font-family: Inter, "Noto Sans JP", system-ui, sans-serif; }
+    :root {
+      color-scheme: light;
+      font-family: Inter, "Noto Sans JP", system-ui, sans-serif;
+      background: #fff;
+      color: #222;
+    }
     * { box-sizing: border-box; }
     body {
-      margin: 0; min-height: 100vh; min-height: 100dvh; display: grid; place-items: center;
-      color: #f7f8ff; background: radial-gradient(ellipse at 50% 42%, #1a2850 0%, #10182e 42%, #080c18 100%);
-      overflow: hidden;
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      background: #fff;
     }
-    main { width: min(92vw, 820px); min-height: 92vh; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: clamp(24px, 5vh, 52px) 0; text-align: center; }
-    .brand { font-size: clamp(12px, 1.7vw, 15px); letter-spacing: .42em; color: #9eadd1; font-weight: 750; }
-    .stage { flex: 1; display: grid; place-items: center; width: 100%; position: relative; }
-    .orb {
-      width: min(58vw, 390px); aspect-ratio: 1; border-radius: 50%; opacity: 0; transform: scale(.72);
-      background: radial-gradient(circle at 35% 28%, #fff 0%, #ffeff2 5%, #ff6b82 24%, #ef3155 62%, #9d1238 100%);
-      box-shadow: 0 0 34px #ff426866, 0 0 100px #ff315544, inset -18px -24px 48px #6e092e66, inset 12px 14px 30px #ffffff66;
-      transition: opacity .16s ease, transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease;
+    main {
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 34px;
+      padding: 24px;
+      text-align: center;
     }
-    .orb.active { opacity: 1; transform: scale(1); }
-    .status { min-height: 2em; font-size: clamp(20px, 4vw, 30px); font-weight: 800; letter-spacing: .12em; }
-    .hint { color: #91a0c3; font-size: 14px; margin-top: 12px; }
-    .key {
-      display: inline-grid; place-items: center; min-width: 48px; padding: 7px 13px; margin: 0 4px;
-      border: 1px solid #62739b; border-bottom-width: 4px; border-radius: 8px;
-      color: #f2f5ff; background: #202b49; font-weight: 800; letter-spacing: .04em;
+    .stage {
+      display: grid;
+      place-items: center;
+      min-height: min(58vh, 440px);
+      width: 100%;
     }
-    .controls { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
-    button { border: 1px solid #45577f; border-radius: 12px; padding: 13px 22px; color: #eef2ff; background: #1a2541; font: inherit; font-weight: 700; cursor: pointer; transition: background .15s, transform .15s; }
-    button:hover { background: #29395f; } button:active { transform: translateY(1px); }
-    button.primary { color: #101629; background: #dce6ff; border-color: #dce6ff; }
-    button.primary:hover { background: #fff; }
-    footer { color: #647395; font-size: 12px; letter-spacing: .08em; }
-    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+    .mark {
+      color: #e60033;
+      font-family: "Noto Sans JP", "Yu Gothic", sans-serif;
+      font-size: clamp(220px, 48vw, 440px);
+      font-weight: 400;
+      line-height: 1;
+      opacity: 0;
+      transform: scale(.92);
+      transition: opacity .12s ease, transform .16s ease;
+      user-select: none;
+    }
+    .mark.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .hint {
+      min-height: 1.5em;
+      color: #777;
+      font-size: 14px;
+      letter-spacing: .04em;
+    }
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    button {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px 18px;
+      background: #fff;
+      color: #444;
+      font: inherit;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    button:hover { border-color: #aaa; }
+    button:focus-visible { outline: 2px solid #e60033; outline-offset: 3px; }
+    button:active { background: #f7f7f7; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+    }
   </style>
 </head>
 <body>
   <main>
-    <header class="brand">QUICK BUZZER</header>
     <section class="stage" aria-live="polite">
-      <div class="orb" id="orb" aria-hidden="true"></div>
+      <div class="mark" id="mark" aria-label="早押し判定">○</div>
     </section>
-    <section>
-      <div class="status" id="status">READY</div>
-      <div class="hint" id="hint">押して反応 <span class="key">SPACE</span></div>
-    </section>
+    <p class="hint" id="hint">SPACEキーで早押し</p>
     <nav class="controls" aria-label="操作">
-      <button class="primary" id="buzzButton" type="button">BUZZ</button>
+      <button id="buzzButton" type="button">BUZZ</button>
       <button id="resetButton" type="button">リセット</button>
       <button id="soundButton" type="button" aria-pressed="true">音 ON</button>
-      <button id="fullscreenButton" type="button">全画面</button>
     </nav>
-    <footer>SPACE KEY TO BUZZ · QUICK BUZZER</footer>
   </main>
   <script>
     (() => {
-      const orb = document.getElementById('orb');
-      const status = document.getElementById('status');
+      const mark = document.getElementById('mark');
       const hint = document.getElementById('hint');
       const buzzButton = document.getElementById('buzzButton');
       const resetButton = document.getElementById('resetButton');
       const soundButton = document.getElementById('soundButton');
-      const fullscreenButton = document.getElementById('fullscreenButton');
       let locked = false;
       let soundEnabled = true;
       let audioContext = null;
 
-      function playTone() {
+      function playNote(frequency, startTime, duration, volume) {
+        const oscillator = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(frequency, startTime);
+        gain.gain.setValueAtTime(0.0001, startTime);
+        gain.gain.linearRampToValueAtTime(volume, startTime + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+        oscillator.connect(gain);
+        gain.connect(audioContext.destination);
+        oscillator.start(startTime);
+        oscillator.stop(startTime + duration + 0.02);
+      }
+
+      async function playChime() {
         if (!soundEnabled) return;
         try {
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
-          if (!AudioContext) return;
-          audioContext ||= new AudioContext();
-          if (audioContext.state === 'suspended') audioContext.resume();
-          const oscillator = audioContext.createOscillator();
-          const gain = audioContext.createGain();
-          oscillator.type = 'sine';
-          oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
-          oscillator.frequency.exponentialRampToValueAtTime(560, audioContext.currentTime + 0.18);
-          gain.gain.setValueAtTime(0.0001, audioContext.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.32, audioContext.currentTime + 0.012);
-          gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.32);
-          oscillator.connect(gain);
-          gain.connect(audioContext.destination);
-          oscillator.start();
-          oscillator.stop(audioContext.currentTime + 0.34);
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return;
+          audioContext ||= new AudioContextClass();
+          if (audioContext.state === 'suspended') await audioContext.resume();
+
+          const now = audioContext.currentTime;
+          // A soft, two-note descending chime: "ピン・ポーン".
+          playNote(988, now, 0.18, 0.22);
+          playNote(784, now + 0.19, 0.34, 0.24);
         } catch (error) {
           console.warn('音声を再生できませんでした:', error);
         }
@@ -97,40 +143,33 @@
       function buzz() {
         if (locked) return;
         locked = true;
-        orb.classList.add('active');
-        status.textContent = 'BUZZ!';
-        hint.textContent = '押されたよ！ リセットして次の問題へ';
-        playTone();
+        mark.classList.add('active');
+        hint.textContent = '判定済み';
+        playChime();
       }
 
       function reset() {
         locked = false;
-        orb.classList.remove('active');
-        status.textContent = 'READY';
-        hint.innerHTML = '押して反応 <span class="key">SPACE</span>';
+        mark.classList.remove('active');
+        hint.textContent = 'SPACEキーで早押し';
       }
 
       document.addEventListener('keydown', (event) => {
         if (event.code !== 'Space' || event.repeat) return;
-        const tag = event.target && event.target.tagName;
-        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || event.target?.isContentEditable) return;
+        const target = event.target;
+        const tag = target && target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' ||
+            tag === 'BUTTON' || target?.isContentEditable) return;
         event.preventDefault();
         buzz();
       });
+
       buzzButton.addEventListener('click', buzz);
       resetButton.addEventListener('click', reset);
       soundButton.addEventListener('click', () => {
         soundEnabled = !soundEnabled;
         soundButton.textContent = soundEnabled ? '音 ON' : '音 OFF';
         soundButton.setAttribute('aria-pressed', String(soundEnabled));
-      });
-      fullscreenButton.addEventListener('click', async () => {
-        try {
-          if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
-          else await document.exitFullscreen();
-        } catch (error) {
-          hint.textContent = '全画面表示にできませんでした';
-        }
       });
     })();
   </script>
